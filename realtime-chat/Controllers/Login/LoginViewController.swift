@@ -106,7 +106,7 @@ class LoginViewController: UIViewController {
         GIDSignIn.sharedInstance()?.presentingViewController = self
         
         title = "Đăng nhập"
-        view.backgroundColor = .white
+        view.backgroundColor = .purple
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Đăng ký", style: .done, target: self, action: #selector(didTapRegister))
         

@@ -121,7 +121,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         
         title = "Đăng ký"
-        view.backgroundColor = .white
+        view.backgroundColor = .purple
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Đăng ký", style: .done, target: self, action: #selector(didTapRegister))
         
