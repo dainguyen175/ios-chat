@@ -47,7 +47,7 @@ final class StorageManager  {
     /// Upload image will be sent in a conversation
     public func uploadMessagePhoto(with data: Data, filename: String, completion: @escaping UploadPictureCompletion) {
         
-        storage.child("messages_images/\(filename)").putData(data, metadata: nil, completion: {metadata, error in
+        storage.child("messages_images/\(filename)").putData(data, metadata: nil, completion: { [weak self] metadata, error in
             guard error == nil else {
                 //failed
                 print("failed to upload data to firebase for picture")
@@ -55,7 +55,33 @@ final class StorageManager  {
                 return
             }
             
-            self.storage.child("messages_images/\(filename)").downloadURL(completion: { url, error in
+            self?.storage.child("messages_images/\(filename)").downloadURL(completion: { url, error in
+                guard let url = url else {
+                    print("failed to get download url")
+                    completion(.failure(StorageErrors.failedToDownloadURL))
+                    return
+                }
+                
+                let urlString = url.absoluteString
+                print("download URL return : \(urlString)")
+                completion(.success(urlString))
+            })
+        })
+    }
+    
+    // upload video
+    public func uploadMessageVideo(with fileUrl: URL, filename: String, completion: @escaping UploadPictureCompletion) {
+        
+        print("url \(fileUrl) --- \(filename)")
+        storage.child("messages_videos/\(filename)").putFile(from: fileUrl, metadata: nil, completion: { [weak self] metadata, error in
+            guard error == nil else {
+                //failed
+                print("failed to upload data to firebase for video \(error )")
+                completion(.failure(StorageErrors.failedToUpload))
+                return
+            }
+            
+            self?.storage.child("messages_videos/\(filename)").downloadURL(completion: { url, error in
                 guard let url = url else {
                     print("failed to get download url")
                     completion(.failure(StorageErrors.failedToDownloadURL))

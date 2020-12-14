@@ -1,22 +1,22 @@
 //
-//  ConversationTableViewCell.swift
+//  NewConversationCell.swift
 //  realtime-chat
 //
-//  Created by Đại Nguyễn  on 12/5/20.
+//  Created by Đại Nguyễn  on 12/15/20.
 //
 
-import UIKit
+import Foundation
 import SDWebImage
 
-class ConversationTableViewCell: UITableViewCell {
+class NewConversationCell: UITableViewCell {
     
-    static let identifier = "ConversationTableViewCell"
+    static let identifier = "NewConversationCell"
     
     private let userImageView: UIImageView = {
         let imageView = UIImageView()
         
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 40
+        imageView.layer.cornerRadius = 35
         imageView.layer.masksToBounds = true
         
         return imageView
@@ -30,22 +30,11 @@ class ConversationTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let userMessageLabel: UILabel = {
-        let label = UILabel()
-    
-        label.font = .systemFont(ofSize: 15, weight: .regular)
-        label.numberOfLines = 0
-        
-        return label
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.addSubview(userImageView)
         contentView.addSubview(usernameLabel)
-        contentView.addSubview(userMessageLabel)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -59,26 +48,19 @@ class ConversationTableViewCell: UITableViewCell {
         
         userImageView.frame = CGRect(x: 10,
                                      y: 10,
-                                     width: 80,
-                                     height: 80)
+                                     width: 70,
+                                     height: 70)
         
         usernameLabel.frame = CGRect(x: userImageView.right + 10,
-                                     y: 5,
+                                     y: 20,
                                      width: contentView.width - 20 - userImageView.width,
-                                     height: (contentView.height - 20)/2)
-        
-        userMessageLabel.frame = CGRect(x: userImageView.right + 10,
-                                        y: usernameLabel.bottom + 5,
-                                        width: contentView.width - 20 - userImageView.width,
-                                        height: (contentView.height - 20)/2)
-
+                                     height: 50)
     }
 
-    public func configure(with model: Conversation) {
-        self.userMessageLabel.text = model.latestMessage.text
+    public func configure(with model: searchResult) {
         self.usernameLabel.text = model.name
         
-        let path = "images/\(model.otherUserEmail)_profile_picture.png"
+        let path = "images/\(model.email)_profile_picture.png"
         
         StorageManager.shared.downloadURL(for: path, completion: {[weak self] result in
             switch result {
@@ -89,7 +71,7 @@ class ConversationTableViewCell: UITableViewCell {
                 }
                 
             case .failure(let error):
-                print("failed to get image url: \(error)")
+                print("failed to get image url \(error)")
             }
         })
     }
