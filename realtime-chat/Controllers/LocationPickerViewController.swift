@@ -35,6 +35,7 @@ class LocationPickerViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        
         if isPickable {
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Gửi", style: .done, target: self, action: #selector(sendButtonTapped))
             
@@ -93,3 +94,4 @@ class LocationPickerViewController: UIViewController {
         map.frame = view.bounds
     }
 }
+
