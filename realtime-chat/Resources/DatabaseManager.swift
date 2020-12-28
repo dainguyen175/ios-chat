@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import MessageKit
-
+import CoreLocation
 final class DatabaseManager {
     
     static let shared = DatabaseManager()
@@ -107,8 +107,6 @@ extension DatabaseManager {
             })
         })
     }
-    
-    
     
     
     public func getAllUsers(completion: @escaping (Result<[[String: String]], Error>)-> Void) {
@@ -440,9 +438,24 @@ extension DatabaseManager {
                     else {
                         return nil
                     }
-                    let media = Media(url: videoUrl, image: nil, placeholderImage: placeHolder, size: CGSize(width: 200, height: 200))
+                    let media = Media(url: videoUrl,
+                                      image: nil,
+                                      placeholderImage: placeHolder,
+                                      size: CGSize(width: 200, height: 200))
                     
                     kind = .video(media)
+                }
+                else if type == "location" {
+                    let locationComponents = content.components(separatedBy: ",")
+                    
+                    guard let longitude = Double(locationComponents[0]),
+                          let latitude = Double(locationComponents[1]) else {
+                        return nil
+                    }
+                    
+                    let location = Location(location: CLLocation(latitude: latitude, longitude: longitude), size: CGSize(width: 200, height: 200))
+                    
+                    kind = .location(location)
                 }
                 else {
                     kind = .text(content)
@@ -463,7 +476,7 @@ extension DatabaseManager {
     }
     
     /// send a message with target conversation
-    public func sendMessage(to conversation: String, name:String, otherUserEmail: String , newMessage: Message, completion: @escaping (Bool) -> Void){
+    public func  sendMessage(to conversation: String, name:String, otherUserEmail: String , newMessage: Message, completion: @escaping (Bool) -> Void){
         // add new message to messages
         // update sender latest message
         // update recipient latest message
@@ -503,7 +516,9 @@ extension DatabaseManager {
                     message = targetUrlString
                 }
                 break
-            case .location(_):
+            case .location(let locationData):
+                let location = locationData.location
+                message = "\(location.coordinate.longitude),\(location.coordinate.latitude)"
                 break
             case .emoji(_):
                 break
